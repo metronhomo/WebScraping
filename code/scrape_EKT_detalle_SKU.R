@@ -4,7 +4,7 @@ library(stringi)
 library(stringr)
 library(gsubfn)
 
-productos_ekt <- readRDS("productos_ekt.RDS") %>% 
+productos_ekt <- readRDS("../data/productos_ekt.RDS") %>% 
   select(SKU, Descripcion)
 
 scrapea_modelo_ekt <- function(sku, verbose = T){
@@ -76,6 +76,6 @@ productos_ekt_detalle <- x %>%
   mutate(SKU = as.numeric(as.character(SKU))) %>% 
   left_join(productos_ekt)
 
-saveRDS(productos_ekt_detalle, "productos_ekt_detalle.RDS")
+saveRDS(productos_ekt_detalle, "../data/productos_ekt_detalle.RDS")
 
 

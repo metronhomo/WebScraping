@@ -76,7 +76,7 @@ x3 <- df_ekt %>%
 
 df_final <- rbind(x1, x2, x3)
 
-saveRDS(df_final, "productos_tiendas.RDS")
+saveRDS(df_final, "../data/productos_tiendas.RDS")
 
 
 

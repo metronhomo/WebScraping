@@ -88,7 +88,7 @@ URLS <- c("http://www.elektra.com.mx/Departments?fldc=11&dc=110108",
 df_productos <- lapply(URLS, scrapea) %>% 
   rbind_all()
 
-saveRDS(df_productos, "productos_ekt.RDS")
+saveRDS(df_productos, "../data/productos_ekt.RDS")
 
 
 

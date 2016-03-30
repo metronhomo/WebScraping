@@ -2,10 +2,10 @@ library(stringi)
 library(dplyr)
 
 
-df_coppel <- readRDS("./base_coppel_1.RDS") %>% 
+df_coppel <- readRDS("../data/base_coppel_1.RDS") %>% 
   filter(Nombre != "Error")
 
-df_famsa <- readRDS("./base_Famsa_1.RDS") %>% 
+df_famsa <- readRDS("../data/base_Famsa_1.RDS") %>% 
   filter(Nombre_producto != "Error")
 
 # cambiar el encoding de los df's
@@ -39,5 +39,5 @@ df_famsa$Caracteristicas <- stri_replace_all_fixed(df_famsa$Caracteristicas,
 
 
 
-saveRDS(df_coppel, "productos_coppel_detalle.RDS")
-saveRDS(df_famsa, "productos_famsa_detalle.RDS")
+saveRDS(df_coppel, "../data/productos_coppel_detalle.RDS")
+saveRDS(df_famsa, "../data/productos_famsa_detalle.RDS")
