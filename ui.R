@@ -6,7 +6,7 @@ shinyUI(
     "Comparación de precios",
     theme = shinytheme("flatly"),
     tabPanel("Open Price",
-             
+             textOutput("texto"),
              radioButtons('filtroProducto', 
                      label = '',
                      choices = unique(productos$Producto),
