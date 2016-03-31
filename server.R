@@ -28,9 +28,10 @@ shinyServer(function(input, output) {
 #     data_openprice()
 #   })
   
-  output$openprice <- renderDataTable({
-    data_openprice()
-  })
+  output$openprice <- renderDataTable(
+    data_openprice(),
+    options = list(pageLength = 150)
+  )
   
 })
 
