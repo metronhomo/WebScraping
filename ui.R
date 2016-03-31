@@ -14,7 +14,7 @@ shinyUI(
                      inline = T
                      ),
              mainPanel(
-               htmlOutput("openprice")
+               dataTableOutput("openprice")
              )
     )
     
