@@ -33,6 +33,42 @@ shinyServer(function(input, output) {
     options = list(pageLength = 150)
   )
   
+  output$download_EKT <- downloadHandler(
+    filename = function() {
+      paste('EKT-', Sys.Date(), '.csv', sep='')
+    },
+    content = function(con) {
+      productos = productos %>% 
+        filter(Tienda == "Elektra") %>% 
+        select(-Tienda)
+      write.csv(productos, con)
+    }
+  )
+  
+  output$download_Famsa <- downloadHandler(
+    filename = function() {
+      paste('Famsa-', Sys.Date(), '.csv', sep='')
+    },
+    content = function(con) {
+      productos = productos %>% 
+        filter(Tienda == "Famsa") %>% 
+        select(-Tienda)
+      write.csv(productos, con)
+    }
+  )
+  
+  output$download_Coppel <- downloadHandler(
+    filename = function() {
+      paste('Coppel-', Sys.Date(), '.csv', sep='')
+    },
+    content = function(con) {
+      productos = productos %>% 
+        filter(Tienda == "Coppel") %>% 
+        select(-Tienda)
+      write.csv(productos, con)
+    }
+  )
+  
 })
 
 

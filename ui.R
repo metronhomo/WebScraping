@@ -14,7 +14,10 @@ shinyUI(
                      inline = T
                      ),
              mainPanel(
-               dataTableOutput("openprice")
+               dataTableOutput("openprice"),
+               downloadButton('download_EKT', 'Descargar datos de Elektra'),
+               downloadButton('download_Coppel', 'Descargar datos de Coppel'),
+               downloadButton('download_Famsa', 'Descargar datos de Famsa')
              )
     )
     
