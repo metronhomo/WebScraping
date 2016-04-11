@@ -18,4 +18,6 @@ productos_ola_02 <- rbind(coppel, ekt, famsa)
 ix <- productos_ola_02$Producto == "COLCH\xd3N"
 productos_ola_02$Producto[ix] = "COLCHON"
 
+productos_ola_02$Tamaño <- gsub("kilos", "Kg", productos_ola_02$Tamaño)
+
 saveRDS(productos_ola_02, "data/productos_ola_02.RDS")
