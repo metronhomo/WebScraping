@@ -50,15 +50,15 @@ shinyUI(
              column(8,
                     radioButtons('filtroProducto', 
                                  label = '',
-                                 choices = unique(productos$Producto),
-                                 selected = unique(productos$Producto)[1],
+                                 choices = list("Lavadoras" = "LAVADORA",
+                                                "Refrigeradores" = "REFRIGERADOR",
+                                                "Pantallas" = "PANTALLA",
+                                                "Estufas" = "ESTUFA",
+                                                "Colchones" = "COLCHON"),
                                  inline = T
                     ),
                     mainPanel(
                       dataTableOutput("openprice")
-#                       downloadButton('download_EKT', 'Descargar datos de Elektra'),
-#                       downloadButton('download_Coppel', 'Descargar datos de Coppel'),
-#                       downloadButton('download_Famsa', 'Descargar datos de Famsa'),
                       
                     ) # End mainPanel
              ) # End column

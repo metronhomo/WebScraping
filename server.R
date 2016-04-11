@@ -2,32 +2,29 @@ library(googleVis)
 library(shiny)
 
 shinyServer(function(input, output) {
+  
   output$texto <- renderText({"Última ejecución del robot: 28 de marzo de 2016"})
+  
   data_openprice <- reactive({
     prod <- input$filtroProducto
+    lev <- as.numeric(unlist(stri_extract_all(input$levantamiento, regex = "[0-9]+")))
     productos_filter <- productos %>% 
-      filter(Producto == prod)
+      filter(Producto == prod &
+               Levantamiento == lev)
     a <- productos_filter %>% 
-      group_by(Tienda, Tamanio) %>% 
+      group_by(Tienda, Tamaño) %>% 
       slice(which.min(Precio)) %>% 
       ungroup() %>% 
       mutate(Precio_Marca = paste0(Marca, ": $", Precio)) %>% 
-      select(Tienda, Tamanio, Precio_Marca) %>% 
+      select(Tienda, Tamaño, Precio_Marca) %>% 
       spread(Tienda, Precio_Marca, fill = '-') %>% 
-      mutate(Tamanio2 = as.numeric(gsub("[^0-9]+", "", Tamanio))) %>% 
-      arrange(Tamanio2) %>% 
-      select(-Tamanio2)
+      mutate(Tamaño2 = as.numeric(gsub("[^0-9]+", "", Tamaño))) %>% 
+      arrange(Tamaño2) %>% 
+      select(-Tamaño2)
     return(a)
   })
   
-  #   output$openprice <- renderGvis({
-  #     gvisTable(data_openprice())
-  #   })
-  
-  #   output$openprice <- renderTable({
-  #     data_openprice()
-  #   })
-  
+
   output$openprice <- renderDataTable(
     data_openprice(),
     options = list(pageLength = 150)
@@ -35,7 +32,7 @@ shinyServer(function(input, output) {
   
   dataset_Input <- reactive({
     descarga_tienda <- unlist(input$opciones_descarga_tienda)
-    descarga_lev <- unlist(input$opciones_descarga_levantamiento)
+    descarga_lev <- as.numeric(unlist(stri_extract_all(input$opciones_descarga_levantamiento, regex = "[0-9]+")))
     return(list(tienda = descarga_tienda,
                 lev = descarga_lev))
   })
@@ -52,21 +49,24 @@ shinyServer(function(input, output) {
       
       if(sum(grepl("Elektra", descarga_tienda)) > 0){
         productos_ekt = productos %>% 
-          filter(Tienda == "Elektra") %>% 
+          filter(Tienda == "Elektra" &
+                   Levantamiento %in% descarga_lev) %>% 
           select(-Tienda)
         write.csv(productos_ekt, file = "Elektra.csv")
       }
       
       if(sum(grepl("Famsa", descarga_tienda)) > 0){
         productos_famsa = productos %>% 
-          filter(Tienda == "Famsa") %>% 
+          filter(Tienda == "Famsa" &
+                   Levantamiento %in% descarga_lev) %>% 
           select(-Tienda)
         write.csv(productos_famsa, file = "Famsa.csv")
       }
       
       if(sum(grepl("Coppel", descarga_tienda)) > 0){
         productos_coppel = productos %>% 
-          filter(Tienda == "Coppel") %>% 
+          filter(Tienda == "Coppel" &
+                   Levantamiento %in% descarga_lev) %>% 
           select(-Tienda)
         write.csv(productos_coppel, file = "Coppel.csv")
       }
