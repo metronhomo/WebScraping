@@ -3,7 +3,19 @@ library(shiny)
 
 shinyServer(function(input, output) {
   
-  output$texto <- renderText({"Última ejecución del robot: 28 de marzo de 2016"})
+  fecha_lev <- reactive({
+    lev <- as.numeric(unlist(stri_extract_all(input$levantamiento, regex = "[0-9]+")))
+    filtrada <- productos %>% 
+      filter(Levantamiento == lev) %>% 
+      select(Fecha_Levantamiento) %>% 
+      unique() %>% 
+      sort()
+    fecha <- as.character(filtrada[1,1])
+    return(fecha)
+  })
+  
+  output$texto <- renderText({
+    paste("Fecha de ejecución del robot:", fecha_lev())})
   
   data_openprice <- reactive({
     prod <- input$filtroProducto

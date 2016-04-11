@@ -19,7 +19,7 @@ shinyUI(
                          align="center",
                          style = "color:#C2D1E0"),
                       br(),
-                      h4("La tabla muestra el precio de apertura más bajo para cada tienda y para cada clasificación de producto.
+                      h4("La tabla muestra el precio de apertura para los productos de cada una de las categorías.
                          Se puede elegir el producto que se quiere ver, y la fecha en la cual se obtuvieron los datos.",
                          style = "color:#C2D1E0"),
                       h4("Además, se tiene la opción de descargar los datos de cualquier fecha, producto y tienda.",
