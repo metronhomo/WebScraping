@@ -2,6 +2,7 @@ library(dplyr)
 library(tidyr)
 library(knitr)
 library(stringi)
+library(plotly)
 source("helpers.R")
 
 productos <- readRDS("data/productos_ola_01.RDS") %>% 

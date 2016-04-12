@@ -3,6 +3,10 @@ library(shiny)
 
 shinyServer(function(input, output) {
   
+  #################################################################################
+  ######### Tabla
+  #################################################################################
+  
   fecha_lev <- reactive({
     lev <- as.numeric(unlist(stri_extract_all(input$levantamiento, regex = "[0-9]+")))
     filtrada <- productos %>% 
@@ -17,7 +21,7 @@ shinyServer(function(input, output) {
   output$texto <- renderText({
     paste("Fecha de ejecución del robot:", fecha_lev())})
   
-  data_openprice <- reactive({
+  data_tabla_openprice <- reactive({
     prod <- input$filtroProducto
     lev <- as.numeric(unlist(stri_extract_all(input$levantamiento, regex = "[0-9]+")))
     productos_filter <- productos %>% 
@@ -36,9 +40,9 @@ shinyServer(function(input, output) {
     return(a)
   })
   
-
-  output$openprice <- renderDataTable(
-    data_openprice(),
+  
+  output$tabla_openprice <- renderDataTable(
+    data_tabla_openprice(),
     options = list(pageLength = 150)
   )
   
@@ -89,41 +93,43 @@ shinyServer(function(input, output) {
     contentType = "application/zip"
   )
   
-  output$download_EKT <- downloadHandler(
-    filename = function() {
-      paste('EKT-', Sys.Date(), '.csv', sep='')
-    },
-    content = function(con) {
-      productos = productos %>% 
-        filter(Tienda == "Elektra") %>% 
-        select(-Tienda)
-      write.csv(productos, con)
-    }
-  )
+  #################################################################################
+  ######### Gráfica
+  #################################################################################
   
-  output$download_Famsa <- downloadHandler(
-    filename = function() {
-      paste('Famsa-', Sys.Date(), '.csv', sep='')
-    },
-    content = function(con) {
-      productos = productos %>% 
-        filter(Tienda == "Famsa") %>% 
-        select(-Tienda)
-      write.csv(productos, con)
+  data_graf_openprice <- reactive({
+    prod <- input$filtroProducto_grafs
+    lev <- as.numeric(unlist(stri_extract_all(input$levantamiento_grafs, regex = "[0-9]+")))
+    if(prod == "COLCHON"){
+      productos_filter <- productos %>% 
+        filter(Producto == prod &
+                 Levantamiento == lev) %>% 
+        mutate(Precio = as.numeric(Precio))
+    } else {
+      productos_filter <- productos %>% 
+        filter(Producto == prod &
+                 Levantamiento == lev) %>% 
+        mutate(Tam = as.numeric(stri_extract(regex = "[0-9]+\\.?[0-9]*", str = Tamaño)),
+               Precio = as.numeric(Precio))
     }
-  )
+    return(list(prod, productos_filter))
+  })  
   
-  output$download_Coppel <- downloadHandler(
-    filename = function() {
-      paste('Coppel-', Sys.Date(), '.csv', sep='')
-    },
-    content = function(con) {
-      productos = productos %>% 
-        filter(Tienda == "Coppel") %>% 
-        select(-Tienda)
-      write.csv(productos, con)
+  output$grafica_openprice <- renderPlot({
+    prod <- data_graf_openprice()[[1]]
+    df <- data_graf_openprice()[[2]]
+    if(prod == "COLCHON") {
+      gg <-  df %>% 
+        ggplot(aes(x = Tienda, y = Precio, color = Tienda)) 
+    } else {
+      gg <- df %>% 
+        ggplot(aes(x = Tienda, y = Precio, color = Tienda, size = Tam))
     }
-  )
+    GG <- gg+ 
+      geom_jitter() +
+      scale_size_continuous(range = c(1, 4))
+    return(GG)
+  })
   
 })
 
