@@ -106,7 +106,10 @@ shinyUI(
                                               inline = T
                                  ),
                                  mainPanel(
-                                   plotOutput("grafica_openprice")
+                                   plotlyOutput("grafica_openprice",
+                                                width = "1400px",
+                                                height = "750px"
+                                                  )
                                  ) # End mainPanel
                           ) # End column
                         ) #end fluidPage

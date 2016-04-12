@@ -115,7 +115,7 @@ shinyServer(function(input, output) {
     return(list(prod, productos_filter))
   })  
   
-  output$grafica_openprice <- renderPlot({
+  output$grafica_openprice <- renderPlotly({
     prod <- data_graf_openprice()[[1]]
     df <- data_graf_openprice()[[2]]
     if(prod == "COLCHON") {
@@ -127,8 +127,10 @@ shinyServer(function(input, output) {
     }
     GG <- gg+ 
       geom_jitter() +
-      scale_size_continuous(range = c(1, 4))
-    return(GG)
+      scale_size_continuous(range = c(0.5, 2.5)) +
+      xlab("") +
+      ylab("")
+    ggplotly(GG)
   })
   
 })
