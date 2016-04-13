@@ -116,8 +116,23 @@ shinyServer(function(input, output) {
   })  
   
   output$grafica_openprice <- renderPlotly({
+    
     prod <- data_graf_openprice()[[1]]
+    
     df <- data_graf_openprice()[[2]]
+    
+    datos_grafica <- df %>% 
+      group_by(Tienda) %>% 
+      summarise(medianas = median(Precio),
+                q95 = quantile(Precio, .95),
+                Max = max(Precio),
+                Num = n()
+                )
+    
+    max_quant_95 <- max(datos_grafica$q95)
+    max_price <- max(datos_grafica$Max)
+    y_text <- max_price + 0.05*max_price
+    
     if(prod == "COLCHON") {
       gg <-  df %>% 
         ggplot(aes(x = Tienda, y = Precio, color = Tienda)) 
@@ -125,11 +140,62 @@ shinyServer(function(input, output) {
       gg <- df %>% 
         ggplot(aes(x = Tienda, y = Precio, color = Tienda, size = Tam))
     }
-    GG <- gg+ 
+    GG <- gg + 
       geom_jitter() +
-      scale_size_continuous(range = c(0.5, 2.5)) +
+      scale_size_continuous(range = c(1, 2.5)) +
       xlab("") +
-      ylab("")
+      ylab("") +
+      scale_y_continuous(labels = scales::dollar) +
+      geom_segment(
+        aes(x = 0.5, 
+            xend = 1.5, 
+            y = datos_grafica$medianas[datos_grafica$Tienda == "Coppel"],
+            yend = datos_grafica$medianas[datos_grafica$Tienda == "Coppel"]
+        ), 
+        color = 'red',
+        size = 0.5) + 
+      annotate("text", 
+               x = 1, 
+               y = y_text,
+               label= paste0("Mediana: ", 
+                             datos_grafica$medianas[datos_grafica$Tienda == "Coppel"],
+                             "<br>",
+                             "Número de productos: ",
+                             datos_grafica$Num[datos_grafica$Tienda == "Coppel"])) + 
+      geom_segment(
+        aes(x = 1.5, 
+            xend = 2.5, 
+            y = datos_grafica$medianas[datos_grafica$Tienda == "Elektra"],
+            yend = datos_grafica$medianas[datos_grafica$Tienda == "Elektra"]
+        ), 
+        color = 'dark green',
+        size = 0.5) +
+      annotate("text", 
+               x = 2, 
+               y = y_text,
+               label= paste0("Mediana: ", 
+                             datos_grafica$medianas[datos_grafica$Tienda == "Elektra"],
+                             "<br>",
+                             "Número de productos: ",
+                             datos_grafica$Num[datos_grafica$Tienda == "Elektra"])) + 
+      geom_segment(
+        aes(x = 2.5, 
+            xend = 3.5, 
+            y = datos_grafica$medianas[datos_grafica$Tienda == "Famsa"],
+            yend = datos_grafica$medianas[datos_grafica$Tienda == "Famsa"]
+        ), 
+        color = 'blue',
+        size = 0.5) +
+      annotate("text", 
+               x = 3, 
+               y = y_text, 
+               label= paste0("Mediana: ", 
+                             datos_grafica$medianas[datos_grafica$Tienda == "Famsa"],
+                             "<br>",
+                             "Número de productos: ",
+                             datos_grafica$Num[datos_grafica$Tienda == "Famsa"])) + 
+      theme(legend.position="none") +
+      theme_MH()
     ggplotly(GG)
   })
   
