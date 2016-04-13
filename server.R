@@ -141,10 +141,11 @@ shinyServer(function(input, output) {
         ggplot(aes(x = Tienda, y = Precio, color = Tienda, size = Tam))
     }
     GG <- gg + 
-      geom_jitter() +
+      geom_jitter(aes(name = Nombre)) +
       scale_size_continuous(range = c(1, 2.5)) +
       xlab("") +
       ylab("") +
+      scale_color_manual(values = c("#ff9900", "#f54b4b", "#778488")) +
       scale_y_continuous(labels = scales::dollar) +
       geom_segment(
         aes(x = 0.5, 
@@ -152,7 +153,7 @@ shinyServer(function(input, output) {
             y = datos_grafica$medianas[datos_grafica$Tienda == "Coppel"],
             yend = datos_grafica$medianas[datos_grafica$Tienda == "Coppel"]
         ), 
-        color = 'red',
+        color = '#cc7a00',
         size = 0.5) + 
       annotate("text", 
                x = 1, 
@@ -168,7 +169,7 @@ shinyServer(function(input, output) {
             y = datos_grafica$medianas[datos_grafica$Tienda == "Elektra"],
             yend = datos_grafica$medianas[datos_grafica$Tienda == "Elektra"]
         ), 
-        color = 'dark green',
+        color = '#ff0000',
         size = 0.5) +
       annotate("text", 
                x = 2, 
@@ -184,7 +185,7 @@ shinyServer(function(input, output) {
             y = datos_grafica$medianas[datos_grafica$Tienda == "Famsa"],
             yend = datos_grafica$medianas[datos_grafica$Tienda == "Famsa"]
         ), 
-        color = 'blue',
+        color = '#495154',
         size = 0.5) +
       annotate("text", 
                x = 3, 
