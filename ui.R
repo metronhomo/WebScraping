@@ -11,14 +11,19 @@ shinyUI(
                     imageOutput('imagen1')
                     ), # End Column
              column(5,
-                    wellPanel(h1('En esta aplicación se hace un comparativo 
-                                 de los precios de categorías selectas en Coppel, Famsa y Elektra.',align="justify"),
+                    wellPanel(h1('La aplicación tiene como propósito compilar, 
+                                 procesar y presentar la información más reciente de la oferta 
+                                 de productos online para ayudar a los tomadores de decisiones 
+                                 con la información más reciente y los informes más concretos posibles. 
+                                 Se consideran las principales cadenas y la información se actualiza de forma 
+                                 semanal.',
+                                 align="justify"),
                               style = "background-color: white;")
                     ), # End Column
              column(1)
     ), # End TabPanel
-    navbarMenu("Open Price",
-               tabPanel("Tablas",
+    navbarMenu("Comparativo de precios",
+               tabPanel("Open Price",
                         fluidPage(
                           column(3,
                                  textOutput("texto"),
@@ -77,7 +82,7 @@ shinyUI(
                           ) # End column
                         ) #end fluidPage
                ), #end TabPanel
-               tabPanel("Gráficas",
+               tabPanel("Distribución de la oferta",
                         fluidPage(
                           column(3,
                                  textOutput("texto2"),
