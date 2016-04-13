@@ -204,13 +204,83 @@ shinyServer(function(input, output) {
       theme(legend.position="none") +
       theme_MH()
     
+    # Para editar el objeto de plotly creado a partir de ggplot
     p <- plotly_build(GG)
+    
+    # Cambiar el texto del mouse hover de las líneas de mediana
     p$data[[4]]$text <- paste("Mediana de precios de Coppel:", 
                               dollar(datos_grafica$medianas[datos_grafica$Tienda == "Coppel"]))
     p$data[[6]]$text <- paste("Mediana de precios de Elektra:", 
                               dollar(datos_grafica$medianas[datos_grafica$Tienda == "Elektra"]))
     p$data[[8]]$text <- paste("Mediana de precios de Famsa:", 
                               dollar(datos_grafica$medianas[datos_grafica$Tienda == "Famsa"]))
+    
+    # Cambiar el texto del mouse hover de los puntos
+    p$data[[1]]$text <- df %>%
+      filter(Tienda == "Coppel") %>% 
+      select(Nombre,
+             Precio,
+             Tamaño,
+             Marca
+      ) %>% 
+      mutate(Texto = paste0(
+        "Producto: ",
+        Nombre,
+        "<br>",
+        "Precio: ",
+        dollar(Precio),
+        "<br>",
+        "Tamaño: ",
+        Tamaño,
+        "<br>",
+        "Marca: ",
+        Marca
+      )) %>% 
+      .$Texto
+    
+    p$data[[2]]$text <- df %>%
+      filter(Tienda == "Elektra") %>% 
+      select(Nombre,
+             Precio,
+             Tamaño,
+             Marca
+      ) %>% 
+      mutate(Texto = paste0(
+        "Producto: ",
+        Nombre,
+        "<br>",
+        "Precio: ",
+        dollar(Precio),
+        "<br>",
+        "Tamaño: ",
+        Tamaño,
+        "<br>",
+        "Marca: ",
+        Marca
+      )) %>% 
+      .$Texto
+    
+    p$data[[3]]$text <- df %>%
+      filter(Tienda == "Famsa") %>% 
+      select(Nombre,
+             Precio,
+             Tamaño,
+             Marca
+      ) %>% 
+      mutate(Texto = paste0(
+        "Producto: ",
+        Nombre,
+        "<br>",
+        "Precio: ",
+        dollar(Precio),
+        "<br>",
+        "Tamaño: ",
+        Tamaño,
+        "<br>",
+        "Marca: ",
+        Marca
+      )) %>% 
+      .$Texto
     
     p
   })
