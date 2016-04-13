@@ -48,7 +48,13 @@ shinyServer(function(input, output) {
   
   dataset_Input <- reactive({
     descarga_tienda <- unlist(input$opciones_descarga_tienda)
-    descarga_lev <- as.numeric(unlist(stri_extract_all(input$opciones_descarga_levantamiento, regex = "[0-9]+")))
+    descarga_lev <- as.numeric(
+      unlist(
+        stri_extract_all(
+          input$opciones_descarga_levantamiento, 
+          regex = "[0-9]+")
+        )
+      )
     return(list(tienda = descarga_tienda,
                 lev = descarga_lev))
   })
@@ -146,7 +152,7 @@ shinyServer(function(input, output) {
       xlab("") +
       ylab("") +
       scale_color_manual(values = c("#ff9900", "#f54b4b", "#778488")) +
-      scale_y_continuous(labels = scales::dollar) +
+      scale_y_continuous(labels = dollar) +
       geom_segment(
         aes(x = 0.5, 
             xend = 1.5, 
@@ -197,7 +203,16 @@ shinyServer(function(input, output) {
                              datos_grafica$Num[datos_grafica$Tienda == "Famsa"])) + 
       theme(legend.position="none") +
       theme_MH()
-    ggplotly(GG)
+    
+    p <- plotly_build(GG)
+    p$data[[4]]$text <- paste("Mediana de precios de Coppel:", 
+                              dollar(datos_grafica$medianas[datos_grafica$Tienda == "Coppel"]))
+    p$data[[6]]$text <- paste("Mediana de precios de Elektra:", 
+                              dollar(datos_grafica$medianas[datos_grafica$Tienda == "Elektra"]))
+    p$data[[8]]$text <- paste("Mediana de precios de Famsa:", 
+                              dollar(datos_grafica$medianas[datos_grafica$Tienda == "Famsa"]))
+    
+    p
   })
   
 })

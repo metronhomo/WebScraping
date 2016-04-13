@@ -3,6 +3,8 @@ library(tidyr)
 library(knitr)
 library(stringi)
 library(plotly)
+library(scales)
+
 source("helpers.R")
 source("utils_MH.R")
 
