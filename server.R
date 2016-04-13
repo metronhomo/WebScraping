@@ -3,6 +3,12 @@ library(shiny)
 
 shinyServer(function(input, output) {
   
+  output$imagen1 <- renderImage({
+    list(src='www/img-obj.jpg',
+         filetype='image/jpeg')
+  }, 
+  deleteFile = F)
+  
   #################################################################################
   ######### Tabla
   #################################################################################

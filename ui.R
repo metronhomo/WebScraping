@@ -6,12 +6,16 @@ shinyUI(
     "Comparación de precios",
     theme = shinytheme("flatly"),
     tabPanel("Objetivo",
+             column(1),
+             column(5,
+                    imageOutput('imagen1')
+                    ), # End Column
              column(5,
                     wellPanel(h1('En esta aplicación se hace un comparativo 
-                                 de los precios de categorías selectas en Coppel, Famsa y Elektra.'),
-                              align="justify"),
-                              style = "background-color: white;"
-                    ) # End Column
+                                 de los precios de categorías selectas en Coppel, Famsa y Elektra.',align="justify"),
+                              style = "background-color: white;")
+                    ), # End Column
+             column(1)
     ), # End TabPanel
     navbarMenu("Open Price",
                tabPanel("Tablas",
