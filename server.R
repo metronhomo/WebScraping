@@ -165,7 +165,7 @@ shinyServer(function(input, output) {
                x = 1, 
                y = y_text,
                label= paste0("Mediana: ", 
-                             datos_grafica$medianas[datos_grafica$Tienda == "Coppel"],
+                             dollar(datos_grafica$medianas[datos_grafica$Tienda == "Coppel"]),
                              "<br>",
                              "Número de productos: ",
                              datos_grafica$Num[datos_grafica$Tienda == "Coppel"])) + 
@@ -181,7 +181,7 @@ shinyServer(function(input, output) {
                x = 2, 
                y = y_text,
                label= paste0("Mediana: ", 
-                             datos_grafica$medianas[datos_grafica$Tienda == "Elektra"],
+                             dollar(datos_grafica$medianas[datos_grafica$Tienda == "Elektra"]),
                              "<br>",
                              "Número de productos: ",
                              datos_grafica$Num[datos_grafica$Tienda == "Elektra"])) + 
@@ -197,7 +197,7 @@ shinyServer(function(input, output) {
                x = 3, 
                y = y_text, 
                label= paste0("Mediana: ", 
-                             datos_grafica$medianas[datos_grafica$Tienda == "Famsa"],
+                             dollar(datos_grafica$medianas[datos_grafica$Tienda == "Famsa"]),
                              "<br>",
                              "Número de productos: ",
                              datos_grafica$Num[datos_grafica$Tienda == "Famsa"])) + 
@@ -208,6 +208,7 @@ shinyServer(function(input, output) {
     p <- plotly_build(GG)
     
     # Cambiar el texto del mouse hover de las líneas de mediana
+    # El orden de la lista p$data[[i]] se asigna de acuerdo al número de capa de ggplot que es
     p$data[[4]]$text <- paste("Mediana de precios de Coppel:", 
                               dollar(datos_grafica$medianas[datos_grafica$Tienda == "Coppel"]))
     p$data[[6]]$text <- paste("Mediana de precios de Elektra:", 

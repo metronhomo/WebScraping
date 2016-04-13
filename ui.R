@@ -88,10 +88,9 @@ shinyUI(
                                               align="center",
                                               style = "color:#C2D1E0"),
                                            br(),
-                                           h4("La tabla muestra el precio de apertura para los productos de cada una de las categorías.
-                                              Se puede elegir el producto que se quiere ver, y la fecha en la cual se obtuvieron los datos.",
-                                              style = "color:#C2D1E0"),
-                                           h4("Además, se tiene la opción de descargar los datos de cualquier fecha, producto y tienda.",
+                                           h4("La gráfica muestra el precio de cada producto en las distintas tiendas.
+                                              Al poner el cursor en un punto, se muestra el detalle de ese producto.
+                                              Las líneas horizontales representan la mediana de cada tienda.",
                                               style = "color:#C2D1E0")
                                  ) # End wellPanel
                                  ), # End column
