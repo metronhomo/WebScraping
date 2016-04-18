@@ -1,7 +1,7 @@
 library(googleVis)
 library(shiny)
 
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
   
   output$imagen1 <- renderImage({
     list(src='www/img-obj.jpg',
@@ -109,21 +109,49 @@ shinyServer(function(input, output) {
   ######### Gráfica
   #################################################################################
   
+  # Para actualizar automáticamente los checkbox inputs de tamaño de acuerdo al producto seleccionado
+  observe({
+    prod <- input$filtroProducto_grafs
+    tams <- productos %>% 
+      filter(Producto == prod) %>% 
+      mutate(Tam = as.numeric(stri_extract(regex = "[0-9]+\\.?[0-9]*", str = Tamaño))) %>% 
+      arrange(Tam) %>% 
+      .$Tamaño %>% 
+      unique()
+    updateCheckboxGroupInput(session,
+                             "filtro_tamano_grafs",
+                             choices = tams,
+                             selected = tams,
+                             inline = T)
+  })
+  
+  observe({
+    prod <- input$filtroProducto_grafs
+    precios <- productos %>% 
+      filter(Producto == prod) %>% 
+      .$Precio %>% 
+      unique()
+    precios <- c(min(precios), max(precios))
+    updateSliderInput(session,
+                      "rango_precios_graf",
+                      value = precios,
+                      min = precios[1],
+                      max = precios[2])
+  })
+  
+  # Datos que va a usar la gráfica
   data_graf_openprice <- reactive({
     prod <- input$filtroProducto_grafs
     lev <- as.numeric(unlist(stri_extract_all(input$levantamiento_grafs, regex = "[0-9]+")))
-    if(prod == "COLCHON"){
-      productos_filter <- productos %>% 
-        filter(Producto == prod &
-                 Levantamiento == lev) %>% 
-        mutate(Precio = as.numeric(Precio))
-    } else {
-      productos_filter <- productos %>% 
-        filter(Producto == prod &
-                 Levantamiento == lev) %>% 
-        mutate(Tam = as.numeric(stri_extract(regex = "[0-9]+\\.?[0-9]*", str = Tamaño)),
-               Precio = as.numeric(Precio))
-    }
+    tams <- input$filtro_tamano_grafs
+    price_range <- input$rango_precios_graf
+    productos_filter <- productos %>% 
+      mutate(Tam = as.numeric(stri_extract(regex = "[0-9]+\\.?[0-9]*", str = Tamaño))) %>% 
+      filter(Producto == prod,
+             Levantamiento == lev,
+             Tamaño %in% tams,
+             Precio >= price_range[1], 
+             Precio <= price_range[2])
     return(list(prod, productos_filter))
   })  
   
@@ -131,9 +159,9 @@ shinyServer(function(input, output) {
     
     prod <- data_graf_openprice()[[1]]
     
-    df <- data_graf_openprice()[[2]]
+    productos_filter <- data_graf_openprice()[[2]]
     
-    datos_grafica <- df %>% 
+    datos_grafica <- productos_filter %>% 
       group_by(Tienda) %>% 
       summarise(medianas = median(Precio),
                 q95 = quantile(Precio, .95),
@@ -146,10 +174,10 @@ shinyServer(function(input, output) {
     y_text <- max_price + 0.05*max_price
     
     if(prod == "COLCHON") {
-      gg <-  df %>% 
+      gg <-  productos_filter %>% 
         ggplot(aes(x = Tienda, y = Precio, color = Tienda)) 
     } else {
-      gg <- df %>% 
+      gg <- productos_filter %>% 
         ggplot(aes(x = Tienda, y = Precio, color = Tienda, size = Tam))
     }
     GG <- gg + 
@@ -170,7 +198,7 @@ shinyServer(function(input, output) {
       annotate("text", 
                x = 1, 
                y = y_text,
-               label= paste0("Mediana: ", 
+               label= paste0("Mediana del precio: ", 
                              dollar(datos_grafica$medianas[datos_grafica$Tienda == "Coppel"]),
                              "<br>",
                              "Número de productos: ",
@@ -186,7 +214,7 @@ shinyServer(function(input, output) {
       annotate("text", 
                x = 2, 
                y = y_text,
-               label= paste0("Mediana: ", 
+               label= paste0("Mediana del precio: ", 
                              dollar(datos_grafica$medianas[datos_grafica$Tienda == "Elektra"]),
                              "<br>",
                              "Número de productos: ",
@@ -202,7 +230,7 @@ shinyServer(function(input, output) {
       annotate("text", 
                x = 3, 
                y = y_text, 
-               label= paste0("Mediana: ", 
+               label= paste0("Mediana del precio: ", 
                              dollar(datos_grafica$medianas[datos_grafica$Tienda == "Famsa"]),
                              "<br>",
                              "Número de productos: ",
@@ -223,7 +251,7 @@ shinyServer(function(input, output) {
                               dollar(datos_grafica$medianas[datos_grafica$Tienda == "Famsa"]))
     
     # Cambiar el texto del mouse hover de los puntos
-    p$data[[1]]$text <- df %>%
+    p$data[[1]]$text <- productos_filter %>%
       filter(Tienda == "Coppel") %>% 
       select(Nombre,
              Precio,
@@ -245,7 +273,7 @@ shinyServer(function(input, output) {
       )) %>% 
       .$Texto
     
-    p$data[[2]]$text <- df %>%
+    p$data[[2]]$text <- productos_filter %>%
       filter(Tienda == "Elektra") %>% 
       select(Nombre,
              Precio,
@@ -267,7 +295,7 @@ shinyServer(function(input, output) {
       )) %>% 
       .$Texto
     
-    p$data[[3]]$text <- df %>%
+    p$data[[3]]$text <- productos_filter %>%
       filter(Tienda == "Famsa") %>% 
       select(Nombre,
              Precio,
