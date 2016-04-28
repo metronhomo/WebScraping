@@ -17,10 +17,10 @@ shinyServer(function(input, output, session) {
     lev <- as.numeric(unlist(stri_extract_all(input$levantamiento, regex = "[0-9]+")))
     filtrada <- productos %>% 
       filter(Levantamiento == lev) %>% 
-      select(Fecha_Levantamiento) %>% 
+      .$Fecha_Levantamiento %>% 
       unique() %>% 
       sort()
-    fecha <- as.character(filtrada[1,1])
+    fecha <- as.character(filtrada[1])
     return(fecha)
   })
   
@@ -112,8 +112,11 @@ shinyServer(function(input, output, session) {
   # Para actualizar automáticamente los checkbox inputs de tamaño de acuerdo al producto seleccionado
   observe({
     prod <- input$filtroProducto_grafs
+    lev <- as.numeric(unlist(stri_extract_all(input$levantamiento_grafs, regex = "[0-9]+")))
     tams <- productos %>% 
-      filter(Producto == prod) %>% 
+      filter(Producto == prod,
+             Levantamiento == lev,
+             !is.na(Tamaño)) %>% 
       mutate(Tam = as.numeric(stri_extract(regex = "[0-9]+\\.?[0-9]*", str = Tamaño))) %>% 
       arrange(Tam) %>% 
       .$Tamaño %>% 
@@ -126,15 +129,28 @@ shinyServer(function(input, output, session) {
   })
   
   observe({
+    lev <- as.numeric(unlist(stri_extract_all(input$levantamiento_grafs, regex = "[0-9]+")))
+    prods <- productos %>% 
+      filter(Levantamiento == lev) %>% 
+      .$Producto %>% 
+      unique()
+    updateRadioButtons(session,
+                             "filtroProducto_grafs",
+                             choices = prods,
+                             inline = T)
+  })
+  
+  observe({
     prod <- input$filtroProducto_grafs
     precios <- productos %>% 
       filter(Producto == prod) %>% 
+      filter(complete.cases(.)) %>% 
       .$Precio %>% 
       unique()
     precios <- c(min(precios), max(precios))
     updateSliderInput(session,
                       "rango_precios_graf",
-                      value = precios,
+                      #value = precios,
                       min = precios[1],
                       max = precios[2])
   })
@@ -151,9 +167,11 @@ shinyServer(function(input, output, session) {
              Levantamiento == lev,
              Tamaño %in% tams,
              Precio >= price_range[1], 
-             Precio <= price_range[2])
+             Precio <= price_range[2]
+             ) %>% 
+      filter(complete.cases(.))
     return(list(prod, productos_filter))
-  })  
+  })
   
   output$grafica_openprice <- renderPlotly({
     

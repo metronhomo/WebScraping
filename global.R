@@ -17,7 +17,7 @@ archivos <- list.files(olas_folder, full.names = T)
 productos <- lapply(archivos, function(x){
   readRDS(x) %>% 
     unique(.) %>% 
-    mutate(Precio = as.numeric(Precio))
+    mutate(Precio = as.numeric(as.character(Precio)))
 }) %>% rbind_all()
 
 # Encuentra qué levantamientos son válidos para todas las tiendas.
@@ -37,7 +37,7 @@ productos <- productos %>%
 
 # Vector que aparecerá en las opciones del Shiny
 levantamientos <- paste("Levantamiento", sort(levantamientos_num, 
-                                               decreasing = T))
+                                               decreasing = F))
 
 productos_list <- unique(productos$Producto)
 # productos_list <- list("Lavadoras" = "LAVADORA",
