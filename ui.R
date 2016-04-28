@@ -30,8 +30,7 @@ shinyUI(
                                  br(),
                                  selectInput("levantamiento", 
                                              "Elige el levantamiento",
-                                             choices = c("Levantamiento 1", "Levantamiento 2"),
-                                             selected = "Levantamiento 2"
+                                             choices = levantamientos
                                  ), # End SelectInput
                                  wellPanel(style = "background-color: #2c3e50;",
                                            h3('¿Qué significa?',
@@ -58,9 +57,7 @@ shinyUI(
                                    ),
                                    checkboxGroupInput("opciones_descarga_levantamiento",
                                                       "Levantamiento",
-                                                      choices = list("Levantamiento 1",
-                                                                     "Levantamiento 2"),
-                                                      selected = "Levantamiento 2",
+                                                      choices = levantamientos,
                                                       inline = T
                                    ),
                                    downloadButton('download_sel', 'Descargar selección')
@@ -89,8 +86,7 @@ shinyUI(
                                  br(),
                                  selectInput("levantamiento_grafs", 
                                              "Elige el levantamiento",
-                                             choices = c("Levantamiento 1", "Levantamiento 2"),
-                                             selected = "Levantamiento 2"
+                                             choices = levantamientos
                                  ), # End SelectInput
                                  sliderInput("rango_precios_graf",
                                              "Elige el rango de precios",

@@ -16,3 +16,7 @@ productos <- lapply(archivos, function(x){
     unique(.) %>% 
     mutate(Precio = as.numeric(Precio))
 }) %>% rbind_all()
+
+
+levantamientos <- paste("Levantamiento", unique(productos$Levantamiento))
+
