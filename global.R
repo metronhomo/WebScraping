@@ -7,7 +7,12 @@ library(scales)
 
 source("helpers.R")
 
-productos <- readRDS("data/productos_ola_01.RDS") %>% 
-  rbind(readRDS("data/productos_ola_02.RDS")) %>% 
-  unique() %>% 
-  mutate(Precio = as.numeric(Precio))
+olas_folder <- "data/olas/"
+archivos <- paste0(olas_folder, list.files(olas_folder))
+
+
+productos <- lapply(archivos, function(x){
+  readRDS(x) %>% 
+    unique(.) %>% 
+    mutate(Precio = as.numeric(Precio))
+}) %>% rbind_all()
