@@ -18,7 +18,8 @@ productos <- lapply(archivos, function(x){
 }) %>% rbind_all()
 
 
-levantamientos <- paste("Levantamiento", unique(productos$Levantamiento))
+levantamientos <- paste("Levantamiento", sort(unique(productos$Levantamiento), 
+                                              decreasing = T))
 
 productos_list <- list("Lavadoras" = "LAVADORA",
                        "Refrigeradores" = "REFRIGERADOR",
