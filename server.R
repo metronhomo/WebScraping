@@ -191,13 +191,14 @@ shinyServer(function(input, output, session) {
     max_price <- max(datos_grafica$Max)
     y_text <- max_price + 0.05*max_price
     
-    if(prod == "COLCHON") {
+    #if(prod == "COLCHON") {
+#    if(sum(grepl("[0-9]+", productos_filter$Tamaño))  0) {
       gg <-  productos_filter %>% 
         ggplot(aes(x = Tienda, y = Precio, color = Tienda)) 
-    } else {
-      gg <- productos_filter %>% 
-        ggplot(aes(x = Tienda, y = Precio, color = Tienda, size = Tam))
-    }
+#     } else {
+#       gg <- productos_filter %>% 
+#         ggplot(aes(x = Tienda, y = Precio, color = Tienda, size = Tam))
+#     }
     GG <- gg + 
       geom_jitter(aes(name = Nombre)) +
       scale_size_continuous(range = c(1, 2.5)) +
