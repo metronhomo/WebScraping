@@ -39,9 +39,9 @@ productos <- productos %>%
 levantamientos <- paste("Levantamiento", sort(levantamientos_num, 
                                                decreasing = T))
 
-#productos_list <- unique(productos$Producto)
-productos_list <- list("Lavadoras" = "LAVADORA",
-                       "Refrigeradores" = "REFRIGERADOR",
-                       "Pantallas" = "PANTALLA",
-                       "Estufas" = "ESTUFA",
-                       "Colchones" = "COLCHON")
+productos_list <- unique(productos$Producto)
+# productos_list <- list("Lavadoras" = "LAVADORA",
+#                        "Refrigeradores" = "REFRIGERADOR",
+#                        "Pantallas" = "PANTALLA",
+#                        "Estufas" = "ESTUFA",
+#                        "Colchones" = "COLCHON")
