@@ -66,11 +66,7 @@ shinyUI(
                           column(8,
                                  radioButtons('filtroProducto', 
                                               label = '',
-                                              choices = list("Lavadoras" = "LAVADORA",
-                                                             "Refrigeradores" = "REFRIGERADOR",
-                                                             "Pantallas" = "PANTALLA",
-                                                             "Estufas" = "ESTUFA",
-                                                             "Colchones" = "COLCHON"),
+                                              choices = productos_list,
                                               inline = T
                                  ),
                                  mainPanel(
@@ -109,11 +105,7 @@ shinyUI(
                           column(8,
                                  radioButtons('filtroProducto_grafs', 
                                               label = 'Elige el producto que quieres ver',
-                                              choices = list("Lavadoras" = "LAVADORA",
-                                                             "Refrigeradores" = "REFRIGERADOR",
-                                                             "Pantallas" = "PANTALLA",
-                                                             "Estufas" = "ESTUFA",
-                                                             "Colchones" = "COLCHON"),
+                                              choices = productos_list,
                                               inline = T
                                  ),
                                  checkboxGroupInput("filtro_tamano_grafs",

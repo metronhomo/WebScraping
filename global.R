@@ -20,3 +20,8 @@ productos <- lapply(archivos, function(x){
 
 levantamientos <- paste("Levantamiento", unique(productos$Levantamiento))
 
+productos_list <- list("Lavadoras" = "LAVADORA",
+                       "Refrigeradores" = "REFRIGERADOR",
+                       "Pantallas" = "PANTALLA",
+                       "Estufas" = "ESTUFA",
+                       "Colchones" = "COLCHON")
