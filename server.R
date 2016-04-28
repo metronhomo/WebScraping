@@ -105,6 +105,21 @@ shinyServer(function(input, output, session) {
     contentType = "application/zip"
   )
   
+  # Para actualizar automáticamente los radio buttons de producto de acuerdo al levantamiento seleccionado
+  observe({
+    lev <- as.numeric(unlist(stri_extract_all(input$levantamiento, regex = "[0-9]+")))
+    
+    prods <- productos %>% 
+      filter(Levantamiento == lev) %>% 
+      .$Producto %>% 
+      unique()
+    
+    updateRadioButtons(session,
+                       "filtroProducto",
+                       choices = prods,
+                       inline = T)
+  })
+  
   #################################################################################
   ######### Gráfica
   #################################################################################
@@ -128,12 +143,25 @@ shinyServer(function(input, output, session) {
                              inline = T)
   })
   
+  # Para actualizar automáticamente los radio buttons de producto de acuerdo al levantamiento seleccionado
   observe({
     lev <- as.numeric(unlist(stri_extract_all(input$levantamiento_grafs, regex = "[0-9]+")))
+
+#     prods <- productos %>% 
+#       filter(Levantamiento == lev) %>% 
+#       .$Producto %>% 
+#       unique()
+    
     prods <- productos %>% 
       filter(Levantamiento == lev) %>% 
+      group_by(Producto, Tienda) %>% 
+      tally() %>% 
+      select(Producto) %>% 
+      tally() %>% 
+      filter(n == 3) %>% 
       .$Producto %>% 
       unique()
+    
     updateRadioButtons(session,
                              "filtroProducto_grafs",
                              choices = prods,
@@ -143,14 +171,14 @@ shinyServer(function(input, output, session) {
   observe({
     prod <- input$filtroProducto_grafs
     precios <- productos %>% 
-      filter(Producto == prod) %>% 
-      filter(complete.cases(.)) %>% 
+      filter(Producto == prod,
+             complete.cases(Precio)) %>% 
       .$Precio %>% 
       unique()
-    precios <- c(min(precios), max(precios))
+    precios <- c(min(precios, na.rm = T), max(precios, na.rm = T))
     updateSliderInput(session,
                       "rango_precios_graf",
-                      #value = precios,
+                      value = precios,
                       min = precios[1],
                       max = precios[2])
   })
@@ -161,15 +189,14 @@ shinyServer(function(input, output, session) {
     lev <- as.numeric(unlist(stri_extract_all(input$levantamiento_grafs, regex = "[0-9]+")))
     tams <- input$filtro_tamano_grafs
     price_range <- input$rango_precios_graf
+    
     productos_filter <- productos %>% 
-      mutate(Tam = as.numeric(stri_extract(regex = "[0-9]+\\.?[0-9]*", str = Tamaño))) %>% 
       filter(Producto == prod,
              Levantamiento == lev,
              Tamaño %in% tams,
              Precio >= price_range[1], 
-             Precio <= price_range[2]
-             ) %>% 
-      filter(complete.cases(.))
+             Precio <= price_range[2])
+    
     return(list(prod, productos_filter))
   })
   
@@ -184,14 +211,12 @@ shinyServer(function(input, output, session) {
       summarise(medianas = median(Precio),
                 q95 = quantile(Precio, .95),
                 Max = max(Precio),
-                Num = n()
-                )
+                Num = n())
     
     max_quant_95 <- max(datos_grafica$q95)
     max_price <- max(datos_grafica$Max)
     y_text <- max_price + 0.05*max_price
     
-    #if(prod == "COLCHON") {
 #    if(sum(grepl("[0-9]+", productos_filter$Tamaño))  0) {
       gg <-  productos_filter %>% 
         ggplot(aes(x = Tienda, y = Precio, color = Tienda)) 
@@ -335,9 +360,10 @@ shinyServer(function(input, output, session) {
         Marca
       )) %>% 
       .$Texto
-    
+  
     p
-  })
+    
+  }) # End renderPlotly
   
 })
 
