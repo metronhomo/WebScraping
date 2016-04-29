@@ -1,4 +1,3 @@
-library(googleVis)
 library(shiny)
 
 shinyServer(function(input, output, session) {
@@ -59,8 +58,8 @@ shinyServer(function(input, output, session) {
         stri_extract_all(
           input$opciones_descarga_levantamiento, 
           regex = "[0-9]+")
-        )
       )
+    )
     return(list(tienda = descarga_tienda,
                 lev = descarga_lev))
   })
@@ -143,15 +142,10 @@ shinyServer(function(input, output, session) {
                              inline = T)
   })
   
+  
   # Para actualizar automáticamente los radio buttons de producto de acuerdo al levantamiento seleccionado
   observe({
     lev <- as.numeric(unlist(stri_extract_all(input$levantamiento_grafs, regex = "[0-9]+")))
-
-#     prods <- productos %>% 
-#       filter(Levantamiento == lev) %>% 
-#       .$Producto %>% 
-#       unique()
-    
     prods <- productos %>% 
       filter(Levantamiento == lev) %>% 
       group_by(Producto, Tienda) %>% 
@@ -163,11 +157,13 @@ shinyServer(function(input, output, session) {
       unique()
     
     updateRadioButtons(session,
-                             "filtroProducto_grafs",
-                             choices = prods,
-                             inline = T)
+                       "filtroProducto_grafs",
+                       choices = prods,
+                       inline = T)
   })
   
+  
+  # Para actualizar automáticamente el mínimo y el máximo del slidebar
   observe({
     prod <- input$filtroProducto_grafs
     precios <- productos %>% 
@@ -187,8 +183,11 @@ shinyServer(function(input, output, session) {
   data_graf_openprice <- reactive({
     prod <- input$filtroProducto_grafs
     lev <- as.numeric(unlist(stri_extract_all(input$levantamiento_grafs, regex = "[0-9]+")))
-    tams <- input$filtro_tamano_grafs
     price_range <- input$rango_precios_graf
+    tams <- input$filtro_tamano_grafs
+    # En caso de que no haya checkbox porque no hay tamaño (como en DVD y Blu Ray), entonces
+    # toma todos los casos
+    if (length(tams) == 0) tams <- unique(productos$Tamaño)
     
     productos_filter <- productos %>% 
       filter(Producto == prod,
@@ -210,21 +209,16 @@ shinyServer(function(input, output, session) {
       group_by(Tienda) %>% 
       summarise(medianas = median(Precio),
                 q95 = quantile(Precio, .95),
-                Max = max(Precio),
+                Max = max(Precio, na.rm = T),
                 Num = n())
     
-    max_quant_95 <- max(datos_grafica$q95)
-    max_price <- max(datos_grafica$Max)
+    max_quant_95 <- max(datos_grafica$q95, na.rm = T)
+    max_price <- max(datos_grafica$Max, na.rm = T)
     y_text <- max_price + 0.05*max_price
     
-#    if(sum(grepl("[0-9]+", productos_filter$Tamaño))  0) {
-      gg <-  productos_filter %>% 
-        ggplot(aes(x = Tienda, y = Precio, color = Tienda)) 
-#     } else {
-#       gg <- productos_filter %>% 
-#         ggplot(aes(x = Tienda, y = Precio, color = Tienda, size = Tam))
-#     }
-    GG <- gg + 
+    
+    GG <-  productos_filter %>% 
+      ggplot(aes(x = Tienda, y = Precio, color = Tienda)) + 
       geom_jitter(aes(name = Nombre)) +
       scale_size_continuous(range = c(1, 2.5)) +
       xlab("") +
@@ -360,7 +354,7 @@ shinyServer(function(input, output, session) {
         Marca
       )) %>% 
       .$Texto
-  
+    
     p
     
   }) # End renderPlotly
